@@ -7,7 +7,10 @@ import { SprayWindowCard } from "@/components/SprayWindowCard";
 import { SoilNutrientCard } from "@/components/SoilNutrientCard";
 import { IrrigationCard } from "@/components/IrrigationCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CloudSun, Wheat } from "lucide-react";
+import { CloudSun, Wheat, Loader2, AlertCircle } from "lucide-react";
+import { useAdvisoryData } from "@/hooks/useAdvisoryData";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 // Sample weather data
 const sampleDailyForecasts = [
@@ -224,6 +227,23 @@ const sampleIrrigation = {
 const Index = () => {
   const [activeSection, setActiveSection] = useState("weather");
   const [weatherTab, setWeatherTab] = useState("daily");
+  
+  // TODO: Replace with actual store name from your Frappe setup
+  // Set to undefined to use sample data, or provide store name to fetch real data
+  const storeName = undefined; // Example: "STORE-0001"
+  const { data: apiData, loading, error } = useAdvisoryData(storeName);
+
+  // Use API data if available, otherwise fall back to sample data
+  const useSampleData = !apiData;
+
+  // Extract data from API or use samples
+  const dailyForecasts = useSampleData ? sampleDailyForecasts : (apiData?.daily_forecast?.data || sampleDailyForecasts);
+  const hourlyForecasts = useSampleData ? sampleHourlyForecasts : (apiData?.hourly_forecast?.data || sampleHourlyForecasts);
+  const alert = useSampleData ? sampleAlert : (apiData?.weather_alerts?.data || sampleAlert);
+  const sprayWindow = useSampleData ? sampleSprayWindow : (apiData?.spray_window?.data || sampleSprayWindow);
+  const nutrients = useSampleData ? sampleNutrients : (apiData?.soil_nutrient?.data || sampleNutrients);
+  const irrigation = useSampleData ? sampleIrrigation : (apiData?.irrigation?.data || sampleIrrigation);
+  const crops = useSampleData ? sampleCrops : (apiData?.gdd?.data ? [apiData.gdd.data] : sampleCrops);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-agriculture-green-light/5">
@@ -242,6 +262,32 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ml-3 text-lg text-muted-foreground">Loading advisory data...</span>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {error}. Using sample data instead.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Data Mode Indicator */}
+        {!loading && (
+          <div className="mb-6 text-center">
+            <span className="text-sm text-muted-foreground">
+              {useSampleData ? '📊 Displaying Sample Data' : '✅ Live Data from Frappe'}
+            </span>
+          </div>
+        )}
         {/* Main Section Tabs */}
         <Tabs value={activeSection} onValueChange={setActiveSection} className="w-full mb-8">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-card shadow-md">
@@ -259,7 +305,7 @@ const Index = () => {
           <TabsContent value="weather" className="space-y-6">
             {/* Weather Alerts */}
             <div className="max-w-2xl mx-auto">
-              <WeatherAlertCard alert={sampleAlert} />
+              <WeatherAlertCard alert={alert} />
             </div>
 
             {/* Weather Sub-tabs */}
@@ -275,7 +321,7 @@ const Index = () => {
 
               <TabsContent value="daily" className="space-y-6">
                 <div className="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
-                  {sampleDailyForecasts.map((forecast, index) => (
+                  {dailyForecasts.map((forecast, index) => (
                     <DailyForecastCard key={index} forecast={forecast} />
                   ))}
                 </div>
@@ -283,7 +329,7 @@ const Index = () => {
 
               <TabsContent value="hourly" className="space-y-6">
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-                  {sampleHourlyForecasts.map((forecast, index) => (
+                  {hourlyForecasts.map((forecast, index) => (
                     <HourlyForecastCard key={index} forecast={forecast} />
                   ))}
                 </div>
@@ -308,7 +354,7 @@ const Index = () => {
                 Growing Degree Days (GDD)
               </h3>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
-                {sampleCrops.map((crop, index) => (
+                {crops.map((crop, index) => (
                   <CropCard key={index} crop={crop} />
                 ))}
               </div>
@@ -320,9 +366,9 @@ const Index = () => {
                 Agricultural Management
               </h3>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-                <SprayWindowCard sprayData={sampleSprayWindow} />
-                <SoilNutrientCard nutrients={sampleNutrients} />
-                <IrrigationCard irrigation={sampleIrrigation} />
+                <SprayWindowCard sprayData={sprayWindow} />
+                <SoilNutrientCard nutrients={nutrients} />
+                <IrrigationCard irrigation={irrigation} />
               </div>
             </div>
           </TabsContent>
