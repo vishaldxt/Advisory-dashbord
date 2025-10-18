@@ -57,6 +57,22 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        weather: {
+          sky: {
+            light: "hsl(var(--sky-light))",
+            dark: "hsl(var(--sky-dark))",
+          },
+          sun: "hsl(var(--sun))",
+          cloud: "hsl(var(--cloud))",
+          rain: "hsl(var(--rain))",
+          warning: "hsl(var(--warning))",
+          alert: "hsl(var(--alert))",
+          success: "hsl(var(--success))",
+        },
+      },
+      boxShadow: {
+        'card': 'var(--shadow-card)',
+        'hover': 'var(--shadow-hover)',
       },
       borderRadius: {
         lg: "var(--radius)",
