@@ -3,6 +3,9 @@ import { DailyForecastCard } from "@/components/DailyForecastCard";
 import { HourlyForecastCard } from "@/components/HourlyForecastCard";
 import { WeatherAlertCard } from "@/components/WeatherAlertCard";
 import { CropCard } from "@/components/CropCard";
+import { SprayWindowCard } from "@/components/SprayWindowCard";
+import { SoilNutrientCard } from "@/components/SoilNutrientCard";
+import { IrrigationCard } from "@/components/IrrigationCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CloudSun, Wheat } from "lucide-react";
 
@@ -176,6 +179,48 @@ const sampleCrops = [
   }
 ];
 
+// Sample spray window data
+const sampleSprayWindow = [
+  { timestamp: "2025-09-15T06:00:00Z", spray: true, conditions: "Low wind, optimal humidity" },
+  { timestamp: "2025-09-15T12:00:00Z", spray: false, conditions: "High wind speeds" },
+  { timestamp: "2025-09-15T18:00:00Z", spray: true, conditions: "Calm conditions" },
+  { timestamp: "2025-09-16T06:00:00Z", spray: true, conditions: "Perfect conditions" },
+  { timestamp: "2025-09-16T12:00:00Z", spray: false, conditions: "Rain expected" },
+  { timestamp: "2025-09-16T18:00:00Z", spray: false, conditions: "High temperatures" },
+  { timestamp: "2025-09-17T06:00:00Z", spray: true, conditions: "Ideal for spraying" }
+];
+
+// Sample soil nutrient data
+const sampleNutrients = {
+  nitrogen: 0,
+  phosphorus: -1,
+  potassium: 0,
+  calcium: 1,
+  magnesium: 0,
+  sulfur: -1,
+  iron: 0,
+  zinc: 0,
+  manganese: 0,
+  copper: 0,
+  boron: -1,
+  ph: 0
+};
+
+// Sample irrigation data
+const sampleIrrigation = {
+  weekly_irrigation_details: [
+    { timestamp: "2025-09-09T00:00:00Z", irrigation_mm: 8.5 },
+    { timestamp: "2025-09-10T00:00:00Z", irrigation_mm: 7.2 },
+    { timestamp: "2025-09-11T00:00:00Z", irrigation_mm: 9.8 },
+    { timestamp: "2025-09-12T00:00:00Z", irrigation_mm: 6.5 },
+    { timestamp: "2025-09-13T00:00:00Z", irrigation_mm: 8.9 },
+    { timestamp: "2025-09-14T00:00:00Z", irrigation_mm: 7.7 },
+    { timestamp: "2025-09-15T00:00:00Z", irrigation_mm: 8.3 }
+  ],
+  weekly_irrigation_mm: 56.9,
+  weekly_irrigation_liter: 5690
+};
+
 const Index = () => {
   const [activeSection, setActiveSection] = useState("weather");
   const [weatherTab, setWeatherTab] = useState("daily");
@@ -247,19 +292,38 @@ const Index = () => {
           </TabsContent>
 
           {/* Crops Section */}
-          <TabsContent value="crops" className="space-y-6">
+          <TabsContent value="crops" className="space-y-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-card-foreground mb-2">
                 Crop Growth Monitoring
               </h2>
               <p className="text-muted-foreground">
-                Track your crops' growth stages and health status
+                Track your crops' growth stages, health status, and agricultural insights
               </p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
-              {sampleCrops.map((crop, index) => (
-                <CropCard key={index} crop={crop} />
-              ))}
+            
+            {/* Crop Growth Cards */}
+            <div>
+              <h3 className="text-xl font-semibold text-card-foreground mb-4 px-2">
+                Growing Degree Days (GDD)
+              </h3>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
+                {sampleCrops.map((crop, index) => (
+                  <CropCard key={index} crop={crop} />
+                ))}
+              </div>
+            </div>
+
+            {/* Agricultural Management */}
+            <div>
+              <h3 className="text-xl font-semibold text-card-foreground mb-4 px-2">
+                Agricultural Management
+              </h3>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+                <SprayWindowCard sprayData={sampleSprayWindow} />
+                <SoilNutrientCard nutrients={sampleNutrients} />
+                <IrrigationCard irrigation={sampleIrrigation} />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
