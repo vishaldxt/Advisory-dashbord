@@ -2,10 +2,11 @@ import { useState } from "react";
 import { DailyForecastCard } from "@/components/DailyForecastCard";
 import { HourlyForecastCard } from "@/components/HourlyForecastCard";
 import { WeatherAlertCard } from "@/components/WeatherAlertCard";
+import { CropCard } from "@/components/CropCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CloudSun } from "lucide-react";
+import { CloudSun, Wheat } from "lucide-react";
 
-// Sample data matching the API structure
+// Sample weather data
 const sampleDailyForecasts = [
   {
     date: "2025-09-15T00:00:00Z",
@@ -103,23 +104,92 @@ const sampleHourlyForecasts = [
 ];
 
 const sampleAlert = {
-  updated_at: Math.floor(Date.now() / 1000) - 3600, // 1 hour ago
+  updated_at: Math.floor(Date.now() / 1000) - 3600,
   value: 2
 };
 
+// Sample crop data
+const sampleCrops = [
+  {
+    name: "Winter Wheat",
+    type: "grain",
+    stages: [
+      { order: 0, name: "Germination" },
+      { order: 1, name: "Tillering" },
+      { order: 2, name: "Stem Extension" },
+      { order: 3, name: "Booting" },
+      { order: 4, name: "Flowering" },
+      { order: 5, name: "Grain Filling" },
+      { order: 6, name: "Ripening" }
+    ],
+    das_stage: 3,
+    gdd_value: 1245.8,
+    gdd_percentage: 62.5,
+    health: 1
+  },
+  {
+    name: "Tomatoes",
+    type: "vegetable",
+    stages: [
+      { order: 0, name: "Seedling" },
+      { order: 1, name: "Vegetative" },
+      { order: 2, name: "Flowering" },
+      { order: 3, name: "Fruit Development" },
+      { order: 4, name: "Ripening" }
+    ],
+    das_stage: 2,
+    gdd_value: 856.3,
+    gdd_percentage: 55.2,
+    health: 1
+  },
+  {
+    name: "Corn (Maize)",
+    type: "grain",
+    stages: [
+      { order: 0, name: "Emergence" },
+      { order: 1, name: "Vegetative" },
+      { order: 2, name: "Tasseling" },
+      { order: 3, name: "Silking" },
+      { order: 4, name: "Grain Filling" },
+      { order: 5, name: "Maturity" }
+    ],
+    das_stage: 1,
+    gdd_value: 654.2,
+    gdd_percentage: 38.7,
+    health: 1
+  },
+  {
+    name: "Cotton",
+    type: "fiber",
+    stages: [
+      { order: 0, name: "Planting" },
+      { order: 1, name: "Emergence" },
+      { order: 2, name: "Squaring" },
+      { order: 3, name: "Flowering" },
+      { order: 4, name: "Boll Development" },
+      { order: 5, name: "Maturity" }
+    ],
+    das_stage: 4,
+    gdd_value: 1456.9,
+    gdd_percentage: 72.3,
+    health: 1
+  }
+];
+
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("daily");
+  const [activeSection, setActiveSection] = useState("weather");
+  const [weatherTab, setWeatherTab] = useState("daily");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-agriculture-green-light/5">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary to-weather-sky-dark text-primary-foreground shadow-lg">
+      <header className="bg-gradient-to-r from-primary via-agriculture-green-accent to-agriculture-green-dark text-primary-foreground shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
-            <CloudSun className="w-10 h-10" />
+            <Wheat className="w-10 h-10" />
             <div>
-              <h1 className="text-3xl font-bold">Weather Dashboard</h1>
-              <p className="text-sm opacity-90">Comprehensive weather forecasting</p>
+              <h1 className="text-3xl font-bold">KhetEdge Advisory Dashboard</h1>
+              <p className="text-sm opacity-95">Agricultural Intelligence Platform • Real-time Weather & Crop Insights</p>
             </div>
           </div>
         </div>
@@ -127,30 +197,68 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Weather Alerts */}
-        <div className="mb-8 max-w-2xl mx-auto">
-          <WeatherAlertCard alert={sampleAlert} />
-        </div>
-
-        {/* Forecast Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-            <TabsTrigger value="daily">Daily Forecast</TabsTrigger>
-            <TabsTrigger value="hourly">Hourly Forecast</TabsTrigger>
+        {/* Main Section Tabs */}
+        <Tabs value={activeSection} onValueChange={setActiveSection} className="w-full mb-8">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-card shadow-md">
+            <TabsTrigger value="weather" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <CloudSun className="w-4 h-4 mr-2" />
+              Weather
+            </TabsTrigger>
+            <TabsTrigger value="crops" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Wheat className="w-4 h-4 mr-2" />
+              Crops
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="daily" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
-              {sampleDailyForecasts.map((forecast, index) => (
-                <DailyForecastCard key={index} forecast={forecast} />
-              ))}
+          {/* Weather Section */}
+          <TabsContent value="weather" className="space-y-6">
+            {/* Weather Alerts */}
+            <div className="max-w-2xl mx-auto">
+              <WeatherAlertCard alert={sampleAlert} />
             </div>
+
+            {/* Weather Sub-tabs */}
+            <Tabs value={weatherTab} onValueChange={setWeatherTab} className="w-full">
+              <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-card shadow-md">
+                <TabsTrigger value="daily" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  Daily Forecast
+                </TabsTrigger>
+                <TabsTrigger value="hourly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  Hourly Forecast
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="daily" className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
+                  {sampleDailyForecasts.map((forecast, index) => (
+                    <DailyForecastCard key={index} forecast={forecast} />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="hourly" className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+                  {sampleHourlyForecasts.map((forecast, index) => (
+                    <HourlyForecastCard key={index} forecast={forecast} />
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
-          <TabsContent value="hourly" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-              {sampleHourlyForecasts.map((forecast, index) => (
-                <HourlyForecastCard key={index} forecast={forecast} />
+          {/* Crops Section */}
+          <TabsContent value="crops" className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-card-foreground mb-2">
+                Crop Growth Monitoring
+              </h2>
+              <p className="text-muted-foreground">
+                Track your crops' growth stages and health status
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
+              {sampleCrops.map((crop, index) => (
+                <CropCard key={index} crop={crop} />
               ))}
             </div>
           </TabsContent>

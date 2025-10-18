@@ -57,14 +57,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        weather: {
-          sky: {
-            light: "hsl(var(--sky-light))",
-            dark: "hsl(var(--sky-dark))",
+        agriculture: {
+          green: {
+            light: "hsl(var(--green-light))",
+            dark: "hsl(var(--green-dark))",
+            accent: "hsl(var(--green-accent))",
           },
+          soil: "hsl(var(--soil))",
           sun: "hsl(var(--sun))",
-          cloud: "hsl(var(--cloud))",
-          rain: "hsl(var(--rain))",
+          water: "hsl(var(--water))",
           warning: "hsl(var(--warning))",
           alert: "hsl(var(--alert))",
           success: "hsl(var(--success))",

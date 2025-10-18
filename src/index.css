@@ -8,53 +8,54 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 204 100% 97%;
-    --foreground: 215 25% 15%;
+    --background: 120 60% 97%;
+    --foreground: 120 10% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 120 10% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 120 10% 15%;
 
-    --primary: 204 94% 42%;
+    --primary: 142 76% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 48 100% 67%;
+    --secondary: 48 96% 53%;
     --secondary-foreground: 30 80% 20%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 120 20% 96%;
+    --muted-foreground: 120 10% 47%;
 
-    --accent: 142 76% 36%;
+    --accent: 142 71% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 204 94% 42%;
+    --border: 120 20% 91%;
+    --input: 120 20% 91%;
+    --ring: 142 76% 36%;
 
     --radius: 0.75rem;
 
-    /* Weather-specific colors */
-    --sky-light: 199 89% 48%;
-    --sky-dark: 215 64% 33%;
-    --sun: 48 100% 67%;
-    --cloud: 210 20% 70%;
-    --rain: 204 70% 53%;
+    /* Agriculture theme colors */
+    --green-light: 142 76% 36%;
+    --green-dark: 142 76% 28%;
+    --green-accent: 142 71% 45%;
+    --soil: 30 40% 45%;
+    --sun: 48 96% 53%;
+    --water: 199 89% 48%;
     --warning: 38 92% 50%;
     --alert: 0 84% 60%;
     --success: 142 76% 36%;
     
     /* Gradients */
-    --gradient-sky: linear-gradient(135deg, hsl(199, 89%, 48%) 0%, hsl(204, 94%, 42%) 100%);
-    --gradient-sunset: linear-gradient(135deg, hsl(48, 100%, 67%) 0%, hsl(25, 95%, 53%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(142, 76%, 28%) 100%);
+    --gradient-light: linear-gradient(135deg, hsl(120, 60%, 97%) 0%, hsl(142, 70%, 92%) 100%);
     
     /* Shadows */
-    --shadow-card: 0 4px 12px hsla(215, 25%, 15%, 0.08);
-    --shadow-hover: 0 8px 24px hsla(215, 25%, 15%, 0.12);
+    --shadow-card: 0 4px 12px hsla(142, 76%, 36%, 0.08);
+    --shadow-hover: 0 8px 24px hsla(142, 76%, 36%, 0.12);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -67,33 +68,33 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 215 28% 12%;
-    --foreground: 210 40% 98%;
+    --background: 120 10% 12%;
+    --foreground: 120 20% 98%;
 
-    --card: 215 25% 16%;
-    --card-foreground: 210 40% 98%;
+    --card: 120 10% 16%;
+    --card-foreground: 120 20% 98%;
 
-    --popover: 215 25% 16%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 120 10% 16%;
+    --popover-foreground: 120 20% 98%;
 
-    --primary: 204 94% 52%;
-    --primary-foreground: 215 25% 15%;
+    --primary: 142 76% 45%;
+    --primary-foreground: 120 10% 15%;
 
-    --secondary: 48 100% 60%;
+    --secondary: 48 96% 53%;
     --secondary-foreground: 30 80% 20%;
 
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 120 10% 18%;
+    --muted-foreground: 120 10% 65%;
 
-    --accent: 142 76% 40%;
+    --accent: 142 71% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 120 20% 98%;
 
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 204 94% 52%;
+    --border: 120 10% 18%;
+    --input: 120 10% 18%;
+    --ring: 142 76% 45%;
     
     --shadow-card: 0 4px 12px hsla(0, 0%, 0%, 0.3);
     --shadow-hover: 0 8px 24px hsla(0, 0%, 0%, 0.4);
