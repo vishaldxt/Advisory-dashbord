@@ -10,6 +10,7 @@ interface AdvisoryData {
   soil_nutrient: any;
   irrigation: any;
   gdd: any;
+  crop_specific_data: any;
 }
 
 export function useAdvisoryData(storeName?: string) {

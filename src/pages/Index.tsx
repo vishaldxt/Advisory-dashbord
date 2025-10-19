@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DailyForecastCard } from "@/components/DailyForecastCard";
 import { HourlyForecastCard } from "@/components/HourlyForecastCard";
 import { WeatherAlertCard } from "@/components/WeatherAlertCard";
@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CloudSun, Wheat, Loader2, AlertCircle } from "lucide-react";
 import { useAdvisoryData } from "@/hooks/useAdvisoryData";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Sample weather data
 const sampleDailyForecasts = [
@@ -184,13 +184,13 @@ const sampleCrops = [
 
 // Sample spray window data
 const sampleSprayWindow = [
-  { timestamp: "2025-09-15T06:00:00Z", spray: true, conditions: "Low wind, optimal humidity" },
-  { timestamp: "2025-09-15T12:00:00Z", spray: false, conditions: "High wind speeds" },
-  { timestamp: "2025-09-15T18:00:00Z", spray: true, conditions: "Calm conditions" },
-  { timestamp: "2025-09-16T06:00:00Z", spray: true, conditions: "Perfect conditions" },
-  { timestamp: "2025-09-16T12:00:00Z", spray: false, conditions: "Rain expected" },
-  { timestamp: "2025-09-16T18:00:00Z", spray: false, conditions: "High temperatures" },
-  { timestamp: "2025-09-17T06:00:00Z", spray: true, conditions: "Ideal for spraying" }
+  { timestamp: "2025-09-15T06:00:00Z", spray: 1, conditions: "Low wind, optimal humidity" },
+  { timestamp: "2025-09-15T12:00:00Z", spray: 0, conditions: "High wind speeds" },
+  { timestamp: "2025-09-15T18:00:00Z", spray: 1, conditions: "Calm conditions" },
+  { timestamp: "2025-09-16T06:00:00Z", spray: 1, conditions: "Perfect conditions" },
+  { timestamp: "2025-09-16T12:00:00Z", spray: 0, conditions: "Rain expected" },
+  { timestamp: "2025-09-16T18:00:00Z", spray: 0, conditions: "High temperatures" },
+  { timestamp: "2025-09-17T06:00:00Z", spray: 1, conditions: "Ideal for spraying" }
 ];
 
 // Sample soil nutrient data
@@ -227,6 +227,7 @@ const sampleIrrigation = {
 const Index = () => {
   const [activeSection, setActiveSection] = useState("weather");
   const [weatherTab, setWeatherTab] = useState("daily");
+  const [selectedCropIndex, setSelectedCropIndex] = useState(0);
   
   // TODO: Replace with actual store name from your Frappe setup
   // Set to undefined to use sample data, or provide store name to fetch real data
@@ -240,10 +241,41 @@ const Index = () => {
   const dailyForecasts = useSampleData ? sampleDailyForecasts : (apiData?.daily_forecast?.data || sampleDailyForecasts);
   const hourlyForecasts = useSampleData ? sampleHourlyForecasts : (apiData?.hourly_forecast?.data || sampleHourlyForecasts);
   const alert = useSampleData ? sampleAlert : (apiData?.weather_alerts?.data || sampleAlert);
-  const sprayWindow = useSampleData ? sampleSprayWindow : (apiData?.spray_window?.data || sampleSprayWindow);
-  const nutrients = useSampleData ? sampleNutrients : (apiData?.soil_nutrient?.data || sampleNutrients);
-  const irrigation = useSampleData ? sampleIrrigation : (apiData?.irrigation?.data || sampleIrrigation);
-  const crops = useSampleData ? sampleCrops : (apiData?.gdd?.data ? [apiData.gdd.data] : sampleCrops);
+  
+  // Handle spray window data (convert spray values to boolean for compatibility)
+  const rawSprayWindow = useSampleData ? sampleSprayWindow : (apiData?.spray_window?.data || sampleSprayWindow);
+  const sprayWindow = rawSprayWindow.map((item: any) => ({
+    ...item,
+    spray: item.spray === 1 || item.spray === true
+  }));
+
+  // Handle crop-specific data
+  const cropSpecificData = useSampleData 
+    ? sampleCrops.map((crop) => ({
+        crop_name: crop.name,
+        gdd: { data: crop },
+        soil_nutrient: { data: sampleNutrients },
+        irrigation: { data: sampleIrrigation }
+      }))
+    : (apiData?.crop_specific_data || []).map((cropData: any) => ({
+        crop_name: cropData.crop_name,
+        gdd: cropData.gdd,
+        soil_nutrient: cropData.soil_nutrient,
+        irrigation: cropData.irrigation
+      }));
+
+  // Get current selected crop data
+  const selectedCropData = cropSpecificData[selectedCropIndex] || cropSpecificData[0];
+  const nutrients = selectedCropData?.soil_nutrient?.data || sampleNutrients;
+  const irrigation = selectedCropData?.irrigation?.data || sampleIrrigation;
+  const cropGdd = selectedCropData?.gdd?.data || sampleCrops[0];
+
+  // Reset selected crop index if it exceeds available crops
+  useEffect(() => {
+    if (selectedCropIndex >= cropSpecificData.length && cropSpecificData.length > 0) {
+      setSelectedCropIndex(0);
+    }
+  }, [cropSpecificData.length, selectedCropIndex]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-agriculture-green-light/5">
@@ -320,18 +352,26 @@ const Index = () => {
               </TabsList>
 
               <TabsContent value="daily" className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
-                  {dailyForecasts.map((forecast, index) => (
-                    <DailyForecastCard key={index} forecast={forecast} />
-                  ))}
+                <div className="overflow-x-auto pb-4">
+                  <div className="flex gap-6 min-w-max px-4">
+                    {dailyForecasts.map((forecast, index) => (
+                      <div key={index} className="w-[400px] flex-shrink-0">
+                        <DailyForecastCard forecast={forecast} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </TabsContent>
 
               <TabsContent value="hourly" className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-                  {hourlyForecasts.map((forecast, index) => (
-                    <HourlyForecastCard key={index} forecast={forecast} />
-                  ))}
+                <div className="overflow-x-auto pb-4">
+                  <div className="flex gap-6 min-w-max px-4">
+                    {hourlyForecasts.map((forecast, index) => (
+                      <div key={index} className="w-[380px] flex-shrink-0">
+                        <HourlyForecastCard forecast={forecast} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
@@ -347,16 +387,38 @@ const Index = () => {
                 Track your crops' growth stages, health status, and agricultural insights
               </p>
             </div>
+
+            {/* Crop Selector - Only show if multiple crops */}
+            {cropSpecificData.length > 1 && (
+              <div className="max-w-md mx-auto mb-8">
+                <label className="block text-sm font-medium text-card-foreground mb-2">
+                  Select Crop
+                </label>
+                <Select 
+                  value={selectedCropIndex.toString()} 
+                  onValueChange={(value) => setSelectedCropIndex(parseInt(value))}
+                >
+                  <SelectTrigger className="w-full bg-card border-border shadow-sm">
+                    <SelectValue placeholder="Select a crop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cropSpecificData.map((cropData: any, index: number) => (
+                      <SelectItem key={index} value={index.toString()}>
+                        {cropData.crop_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             
-            {/* Crop Growth Cards */}
+            {/* Crop Growth Card */}
             <div>
               <h3 className="text-xl font-semibold text-card-foreground mb-4 px-2">
                 Growing Degree Days (GDD)
               </h3>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
-                {crops.map((crop, index) => (
-                  <CropCard key={index} crop={crop} />
-                ))}
+              <div className="max-w-2xl mx-auto">
+                <CropCard crop={cropGdd} />
               </div>
             </div>
 

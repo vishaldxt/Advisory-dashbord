@@ -1,7 +1,7 @@
 # Frappe Backend Integration Guide
 
 ## 📋 Overview
-Your React dashboard is now configured to fetch real data from your Frappe backend APIs. Follow these steps to connect everything.
+Your React dashboard is now configured to fetch real data from your Frappe backend APIs with support for **multiple crops** and **horizontal scrolling** for forecasts.
 
 ---
 
@@ -63,6 +63,54 @@ npm run dev
 ---
 
 ## 🎯 How It Works
+
+### New Features:
+- **Multi-Crop Support**: Dashboard now displays data for multiple crops with a dropdown selector
+- **Horizontal Scrolling**: Daily and hourly forecasts scroll horizontally for better viewing
+- **Consistent Card Design**: All cards maintain uniform sizing and styling
+
+### Expected API Structure:
+Your Frappe `fetch_all_api_data` method should return:
+```json
+{
+  "daily_forecast": { "data": [...] },
+  "hourly_forecast": { "data": [...] },
+  "weather_alerts": { "data": {...} },
+  "spray_window": { 
+    "data": [
+      { "timestamp": "2025-10-19T08:00:00Z", "spray": 0 },
+      { "timestamp": "2025-10-19T09:00:00Z", "spray": 1 }
+    ] 
+  },
+  "crop_specific_data": [
+    {
+      "crop_id": 106,
+      "crop_name": "Maize",
+      "soil_nutrient": { "data": { "N": 0, "P": -1, "K": 0, ... } },
+      "irrigation": { 
+        "data": { 
+          "weekly_irrigation_details": [...],
+          "weekly_irrigation_mm": 19.96
+        } 
+      },
+      "gdd": { 
+        "data": { 
+          "stages": [...],
+          "das_stage": 2,
+          "health": 1,
+          "gdd_value": 723.01,
+          "gdd_percentage": 60
+        } 
+      }
+    },
+    {
+      "crop_id": 70,
+      "crop_name": "Bajra",
+      ...
+    }
+  ]
+}
+```
 
 ### Data Flow:
 1. **React Frontend** (`src/pages/Index.tsx`) calls `useAdvisoryData` hook
