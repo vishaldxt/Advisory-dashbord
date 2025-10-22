@@ -549,26 +549,24 @@ function load_advisory_dashboard(frm) {
             
             /* Dashboard Header */
             .k-dashboard-header { 
-                text-align: center; 
+                text-align: left; 
                 margin-bottom: 2rem; 
-                background: rgba(255,255,255,0.8);
-                backdrop-filter: blur(10px);
+                background: linear-gradient(135deg, var(--primary), hsl(142, 76%, 28%));
                 padding: 2rem; 
                 border-radius: var(--radius); 
-                border: 1px solid var(--border-color);
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+                box-shadow: 0 4px 6px -1px rgba(14,122,65,0.2);
             }
             .k-dashboard-header h1 { 
                 font-size: 2rem; 
                 font-weight: 700; 
-                color: var(--primary); 
+                color: white; 
                 margin: 0 0 0.5rem; 
                 display: flex; 
                 align-items: center; 
-                justify-content: center; 
+                justify-content: flex-start; 
                 gap: 0.75rem; 
             }
-            .k-dashboard-header p { color: var(--text-muted); margin: 0; font-size: 1rem; }
+            .k-dashboard-header p { color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 1rem; }
             
             /* Toggle Bar */
             .k-toggle-bar { 
@@ -639,11 +637,12 @@ function load_advisory_dashboard(frm) {
             .k-card .card-header { 
                 display: flex; 
                 align-items: center; 
-                justify-content: space-between; 
+                justify-content: flex-start; 
                 gap: 0.75rem; 
                 margin-bottom: 1rem; 
                 padding-bottom: 0.75rem; 
-                border-bottom: 1px solid var(--border-color); 
+                border-bottom: 1px solid var(--border-color);
+                background: transparent;
             } 
             .k-card .card-header h3 { 
                 font-size: 1.125rem; 
@@ -927,13 +926,11 @@ function load_advisory_dashboard(frm) {
             }
             
             .k-card-gradient-header .card-header { 
-                background: linear-gradient(135deg, var(--section-bg), var(--card-bg)); 
+                background: transparent; 
                 border-bottom: 1px solid var(--border-color); 
-                margin: -1.25rem -1.25rem 0; 
-                padding: 1rem; 
-                border-top-left-radius: var(--radius); 
-                border-top-right-radius: var(--radius); 
-            } 
+                margin: 0; 
+                padding: 0 0 0.75rem 0; 
+            }
             .header-icon-bg { 
                 width: 3rem; 
                 height: 3rem; 
